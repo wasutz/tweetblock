@@ -46,11 +46,9 @@ class App extends Component {
     const tweets = [];
 
     for (let i = tweetCount; i >= 1; i--) {
-      const tweet = await contract.methods.tweets(i - 1).call();
+      const tweet = await contract.methods.tweets(i).call();
       tweets.push(tweet);
     }
-
-    console.log(tweets);
 
     this.setState({tweets});
   };
@@ -58,8 +56,12 @@ class App extends Component {
   createTweet = async () => {
     const {accounts, contract, message} = this.state;
 
-    console.log(message);
+    if (!message) {
+      return;
+    }
+
     await contract.methods.create(message).send({from: accounts[0]});
+    this.setState({message: ''});
   }
 
   onChangeTweetMessage = (event) => {
