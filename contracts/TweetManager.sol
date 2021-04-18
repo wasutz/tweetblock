@@ -8,7 +8,7 @@ contract TweetManager {
     address owner;
   }
 
-  Tweet[] public tweets;
+  mapping(uint => Tweet) public tweets;
   uint public tweetCount;
 
   event TweetCreated(
@@ -19,7 +19,7 @@ contract TweetManager {
 
   function create(string memory message) public {
     tweetCount++;
-    tweets.push(Tweet(tweetCount, message, msg.sender));
+    tweets[tweetCount] = Tweet(tweetCount, message, msg.sender);
 
     emit TweetCreated(tweetCount, message, msg.sender);
   }

@@ -9,6 +9,11 @@ contract("TweetManager", accounts => {
 
     const result = await tweetManagerInstance.create(message, { from: accounts[0] });
 
+    const tweet = await tweetManagerInstance.tweets(1);
+    const tweetCount = await tweetManagerInstance.tweetCount();
+
+    assert.equal(tweet.message, message);
+    assert.equal(tweetCount, 1);
     truffleAssert.eventEmitted(result, 'TweetCreated', (ev) => {
       return ev.message === message;
     });
