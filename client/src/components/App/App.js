@@ -76,7 +76,7 @@ class App extends Component {
       <div className="App">
         <CssBaseline />
         <Container maxWidth={"sm"}>
-          <Typography component="h1" variant="h2">
+          <Typography component="h1" variant="h2" className={'title'}>
               Tweet Block
           </Typography>
           <TweetForm onSubmit={this.createTweet} />

@@ -1,14 +1,26 @@
 import React from 'react';
 import {Card, CardContent, Typography} from '@material-ui/core';
+import {makeStyles} from '@material-ui/core/styles';
+
+const useStyles = makeStyles(({
+  tweetCard: {
+    marginTop: '1rem',
+  },
+  owner: {
+    paddingBottom: '1rem'
+  }
+}));
 
 const Tweet = ({tweet}) => {
+  const classes = useStyles();
+
   return (
-    <Card>
+    <Card className={classes.tweetCard}>
         <CardContent>
-            <Typography component="body2" variant="p">
-                {tweet.address}
+            <Typography component="h5" variant="p" className={classes.owner}>
+                {tweet.owner}
             </Typography>
-            <Typography component="body2" variant="p">
+            <Typography component="subtitle1" variant="p">
                 {tweet.message}
             </Typography>
         </CardContent>
