@@ -16,6 +16,10 @@ const useStyles = makeStyles(({
 const TweetForm = ({onSubmit}) => {
     const classes = useStyles();
     const [message, onChangeTweetMessage] = useState('');
+    const onClickTweet = async () => {
+        await onSubmit(message);
+        onChangeTweetMessage('');
+    };
 
     return (
         <Card className={classes.tweetForm}>
@@ -36,7 +40,7 @@ const TweetForm = ({onSubmit}) => {
                     className={classes.tweetButton}
                     variant="contained"
                     color="primary"
-                    onClick={onSubmit.bind(this, message)}>
+                    onClick={onClickTweet}>
                     Tweet
                 </Button>
             </CardActions>
