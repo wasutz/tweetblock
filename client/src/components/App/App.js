@@ -15,10 +15,18 @@ class App extends Component {
   };
 
   componentDidMount = async () => {
+    const web3 = await this.prepareWeb3();
+    web3.eth.subscribe('newBlockHeaders', (error) => {
+      if (!error) {
+        this.load10LastestTweets();
+      }
+    });
+  };
+
+  prepareWeb3 = async () => {
     try {
       const web3 = await getWeb3();
       const accounts = await web3.eth.getAccounts();
-
       const networkId = await web3.eth.net.getId();
       const deployedNetwork = TweetManager.networks[networkId];
       const instance = new web3.eth.Contract(
@@ -26,9 +34,10 @@ class App extends Component {
         deployedNetwork && deployedNetwork.address,
       );
 
-      this.setState({ web3, accounts, contract: instance }, this.loadAllTweets);
+      this.setState({ web3, accounts, contract: instance }, this.load10LastestTweets);
+
+      return web3;
     } catch (error) {
-      // Catch any errors for any of the above operations.
       alert(
         `Failed to load web3, accounts, or contract. Check console for details.`,
       );
@@ -36,7 +45,7 @@ class App extends Component {
     }
   };
 
-  loadAllTweets = async () => {
+  load10LastestTweets = async () => {
     const {contract} = this.state;
 
     const tweetCount = await contract.methods.tweetCount().call();
@@ -45,8 +54,7 @@ class App extends Component {
     }
 
     const tweets = [];
-
-    for (let i = tweetCount; i >= 1; i--) {
+    for (let i = tweetCount; i >= Math.max(tweetCount - 9, 1); i--) {
       const tweet = await contract.methods.tweets(i).call();
       tweets.push(tweet);
     }
