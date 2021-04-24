@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import TweetManager from "../../contracts/TweetManager.json";
 import getWeb3 from "../../getWeb3";
-import {TextField, Button} from '@material-ui/core';
-
+import {Container, Typography, CssBaseline} from '@material-ui/core';
+import TweetForm from '../TweetForm/TweetForm';
+import TweetList from '../TweetList/TweetList';
 import "./App.css";
 
 class App extends Component {
@@ -53,8 +54,8 @@ class App extends Component {
     this.setState({tweets});
   };
 
-  createTweet = async () => {
-    const {accounts, contract, message} = this.state;
+  createTweet = async (message) => {
+    const {accounts, contract} = this.state;
 
     if (!message) {
       return;
@@ -62,10 +63,6 @@ class App extends Component {
 
     await contract.methods.create(message).send({from: accounts[0]});
     this.setState({message: ''});
-  }
-
-  onChangeTweetMessage = (event) => {
-    this.setState({message: event.target.value})
   }
 
   render() {
@@ -77,22 +74,14 @@ class App extends Component {
 
     return (
       <div className="App">
-        <h1>Tweet Block</h1>
-        <TextField
-          id="outlined-multiline-static"
-          multiline
-          rows={2}
-          value={this.state.message}
-          placeholder="What's happening?"
-          onChange={this.onChangeTweetMessage}
-          variant="outlined" />
-        <Button variant="contained" color="primary" onClick={this.createTweet}>
-          Tweet
-        </Button>
-
-        {tweets.map(tweet => (
-          <p key={tweet.id}>{tweet.message}</p>
-        ))}
+        <CssBaseline />
+        <Container maxWidth={"sm"}>
+          <Typography component="h1" variant="h2">
+              Tweet Block
+          </Typography>
+          <TweetForm onSubmit={this.createTweet} />
+          <TweetList tweets={tweets} />
+        </Container>
       </div>
     );
   }
