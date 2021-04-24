@@ -17,10 +17,10 @@ const Tweet = ({tweet}) => {
   return (
     <Card className={classes.tweetCard}>
         <CardContent>
-            <Typography component="h5" variant="p" className={classes.owner}>
+            <Typography component="p" variant="subtitle1" className={classes.owner}>
                 {tweet.owner}
             </Typography>
-            <Typography component="subtitle1" variant="p">
+            <Typography component="p" variant="subtitle2">
                 {tweet.message}
             </Typography>
         </CardContent>
