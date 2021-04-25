@@ -1,7 +1,15 @@
-.App {
-  margin-top: 2rem;
+.menus {
+  margin-left: auto;
 }
 
-.title {
-  text-align: center;
+.menu {
+  text-decoration: none;
+  color: #fff;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 500px;
 }

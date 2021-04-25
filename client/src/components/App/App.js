@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import TweetManager from "../../contracts/TweetManager.json";
 import getWeb3 from "../../getWeb3";
-import {Container, Typography, CssBaseline} from '@material-ui/core';
+import {AppBar, Toolbar, Container, Typography, Button, CssBaseline, CircularProgress}
+  from '@material-ui/core';
 import TweetForm from '../TweetForm/TweetForm';
 import TweetList from '../TweetList/TweetList';
 import "./App.css";
@@ -74,23 +75,38 @@ class App extends Component {
   }
 
   render() {
-    if (!this.state.web3) {
-      return <div>Loading Web3, accounts, and contract...</div>;
-    }
-
-    const {tweets} = this.state;
+    const {tweets, web3} = this.state;
 
     return (
-      <div className="App">
+      <>
         <CssBaseline />
+        <AppBar position="static">
+          <Toolbar>
+            <a href="/" className="menu">
+              <Typography variant="h6">
+                Tweet Block
+              </Typography>
+            </a>
+            <div className="menus">
+              <a href="/" className="menu">
+                <Button color="inherit">Home</Button>
+              </a>
+            </div>
+          </Toolbar>
+        </AppBar>
         <Container maxWidth={"sm"}>
-          <Typography component="h1" variant="h2" className={'title'}>
-              Tweet Block
-          </Typography>
-          <TweetForm onSubmit={this.createTweet} />
-          <TweetList tweets={tweets} />
+          {web3 ? (
+            <>
+              <TweetForm onSubmit={this.createTweet} />
+              <TweetList tweets={tweets} />
+            </>
+          ) : (
+            <div className="loading-container">
+              <CircularProgress />
+            </div>
+          )}
         </Container>
-      </div>
+      </>
     );
   }
 }
