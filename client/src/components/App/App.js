@@ -17,11 +17,8 @@ class App extends Component {
 
   componentDidMount = async () => {
     const web3 = await this.prepareWeb3();
-    web3.eth.subscribe('newBlockHeaders', (error) => {
-      if (!error) {
-        this.load10LastestTweets();
-      }
-    });
+    this.load10LastestTweets();
+    this.subscribeForNewTweet(web3);
   };
 
   prepareWeb3 = async () => {
@@ -35,7 +32,7 @@ class App extends Component {
         deployedNetwork && deployedNetwork.address,
       );
 
-      this.setState({ web3, accounts, contract: instance }, this.load10LastestTweets);
+      this.setState({ web3, accounts, contract: instance });
 
       return web3;
     } catch (error) {
@@ -45,6 +42,14 @@ class App extends Component {
       console.error(error);
     }
   };
+
+  subscribeForNewTweet = web3 => {
+    web3.eth.subscribe('newBlockHeaders', (error) => {
+      if (!error) {
+        this.load10LastestTweets();
+      }
+    });
+  }
 
   load10LastestTweets = async () => {
     const {contract} = this.state;
