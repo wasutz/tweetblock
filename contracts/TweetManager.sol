@@ -22,8 +22,7 @@ contract TweetManager {
     address owner
   );
 
-  function create(string memory message,
-                  string memory image) public {
+  function create(string memory message, string memory image) public {
     tweetCount++;
     tweets[tweetCount] = Tweet(tweetCount, message, image, msg.sender);
 

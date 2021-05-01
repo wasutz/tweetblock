@@ -2,9 +2,10 @@ import React, { Component } from "react";
 import TweetManager from "../../contracts/TweetManager.json";
 import getWeb3 from "../../getWeb3";
 import {AppBar, Toolbar, Container, Typography, Button, CssBaseline, CircularProgress}
-  from '@material-ui/core';
-import TweetForm from '../TweetForm/TweetForm';
-import TweetList from '../TweetList/TweetList';
+  from "@material-ui/core";
+import TweetForm from "../TweetForm/TweetForm";
+import TweetList from "../TweetList/TweetList";
+import ipfs from "ipfs-core";
 import "./App.css";
 
 class App extends Component {
@@ -68,16 +69,24 @@ class App extends Component {
     this.setState({tweets});
   };
 
-  createTweet = async (message) => {
+  createTweet = async (message, image) => {
     const {accounts, contract} = this.state;
 
     if (!message) {
       return;
     }
 
-    await contract.methods.create(message).send({from: accounts[0]});
-    this.setState({message: ''});
+    const imageHash = image ? await this.uploadImage(image) : '';
+
+    await contract.methods.create(message, imageHash).send({from: accounts[0]});
   }
+
+  uploadImage = async image => {
+    const ipfsInstance = await ipfs.create();
+    const result = await ipfsInstance.add(image);
+
+    return result.path;
+  };
 
   render() {
     const {tweets, web3} = this.state;
