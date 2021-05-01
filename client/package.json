@@ -4,8 +4,10 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "4.11.3",
+    "ipfs-core": "0.5.4",
     "react": "16.11.0",
     "react-dom": "16.11.0",
+    "react-images-upload": "1.2.8",
     "react-scripts": "3.2.0",
     "web3": "1.2.2"
   },
