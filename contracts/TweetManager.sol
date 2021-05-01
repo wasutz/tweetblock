@@ -5,6 +5,7 @@ contract TweetManager {
   struct Tweet {
     uint id;
     string message;
+    string image;
     address owner;
   }
 
@@ -17,16 +18,18 @@ contract TweetManager {
   event TweetCreated(
     uint id,
     string message,
+    string image,
     address owner
   );
 
-  function create(string memory message) public {
+  function create(string memory message,
+                  string memory image) public {
     tweetCount++;
-    tweets[tweetCount] = Tweet(tweetCount, message, msg.sender);
+    tweets[tweetCount] = Tweet(tweetCount, message, image, msg.sender);
 
     ownerTweetCount[msg.sender] =  ownerTweetCount[msg.sender] + 1;
     ownerTweets[msg.sender][ownerTweetCount[msg.sender]] = tweets[tweetCount];
 
-    emit TweetCreated(tweetCount, message, msg.sender);
+    emit TweetCreated(tweetCount, message, image, msg.sender);
   }
 }

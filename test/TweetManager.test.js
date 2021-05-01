@@ -8,7 +8,8 @@ contract("TweetManager", accounts => {
     const tweetManagerInstance = await TweetManager.deployed();
 
     const message = "My test tweet";
-    const result = await tweetManagerInstance.create(message, { from: accounts[0] });
+    const imageHash = "XYZ";
+    const result = await tweetManagerInstance.create(message, imageHash, { from: accounts[0] });
 
     const tweet = await tweetManagerInstance.tweets(1);
     const tweetCount = await tweetManagerInstance.tweetCount();
@@ -17,6 +18,7 @@ contract("TweetManager", accounts => {
     const ownerTweetCount = await tweetManagerInstance.ownerTweetCount(accounts[0]);
 
     assert.equal(tweet.message, message);
+    assert.equal(tweet.image, imageHash);
     assert.equal(tweetCount, 1);
     assert.equal(ownerTweet.message, message);
     assert.equal(ownerTweetCount, 1);
