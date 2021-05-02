@@ -13,13 +13,16 @@ class App extends Component {
     tweets: [],
     web3: null,
     accounts: null,
-    contract: null
+    contract: null,
+    error: null
   };
 
   componentDidMount = async () => {
     const web3 = await this.prepareWeb3();
-    this.load10LastestTweets();
-    this.subscribeForNewTweet(web3);
+    if (web3) {
+      this.load10LastestTweets();
+      this.subscribeForNewTweet(web3);
+    }
   };
 
   prepareWeb3 = async () => {
@@ -33,14 +36,11 @@ class App extends Component {
         deployedNetwork && deployedNetwork.address,
       );
 
-      this.setState({ web3, accounts, contract: instance });
+      this.setState({ web3, accounts, contract: instance, error: null });
 
       return web3;
     } catch (error) {
-      alert(
-        `Failed to load web3, accounts, or contract. Check console for details.`,
-      );
-      console.error(error);
+      this.setState({error})
     }
   };
 
@@ -89,7 +89,7 @@ class App extends Component {
   };
 
   render() {
-    const {tweets, web3} = this.state;
+    const {tweets, web3, error} = this.state;
 
     return (
       <>
@@ -109,13 +109,21 @@ class App extends Component {
           </Toolbar>
         </AppBar>
         <Container maxWidth={"sm"}>
-          {web3 ? (
+          {web3 && (
             <>
               <TweetForm onSubmit={this.createTweet} />
               <TweetList tweets={tweets} />
             </>
-          ) : (
-            <div className="loading-container">
+          )}
+
+          {error && (
+            <div className="center-container">
+              <h2>Please connect your wallet to continue</h2>
+            </div>
+          )}
+
+          {!web3 && !error && (
+            <div className="center-container">
               <CircularProgress />
             </div>
           )}
