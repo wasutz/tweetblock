@@ -1,12 +1,3 @@
-.menus {
-  margin-left: auto;
-}
-
-.menu {
-  text-decoration: none;
-  color: #fff;
-}
-
 .center-container {
   display: flex;
   flex-direction: column;

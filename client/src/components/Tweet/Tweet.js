@@ -16,7 +16,6 @@ const useStyles = makeStyles(({
 
 const Tweet = ({tweet}) => {
   const classes = useStyles();
-  console.log(tweet.image);
 
   return (
     <Card className={classes.tweetCard}>

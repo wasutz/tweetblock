@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import TweetManager from "../../contracts/TweetManager.json";
 import TweetToken from "../../contracts/TweetToken.json";
 import getWeb3 from "../../getWeb3";
-import {AppBar, Toolbar, Container, Typography, Button, CssBaseline, CircularProgress}
-  from "@material-ui/core";
-import TweetForm from "../TweetForm/TweetForm";
-import TweetList from "../TweetList/TweetList";
+import {Container, CssBaseline, CircularProgress} from "@material-ui/core";
+import TweetForm from "../../components/TweetForm/TweetForm";
+import TweetList from "../../components/TweetList/TweetList";
+import Header from "../../components/Header/Header";
 import ipfs from "ipfs-core";
 import "./App.css";
 
@@ -128,18 +128,7 @@ class App extends Component {
     return (
       <>
         <CssBaseline />
-        <AppBar position="static">
-          <Toolbar>
-            <a href="/" className="menu">
-              <Typography variant="h6">
-                Tweet Block
-              </Typography>
-            </a>
-            <div className="menus">
-              <Button color="inherit">Your TWT: {tokenBalance}</Button>
-            </div>
-          </Toolbar>
-        </AppBar>
+        <Header tokenBalance={tokenBalance} />
         <Container maxWidth={"sm"}>
           {web3 && (
             <>
