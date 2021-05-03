@@ -38,7 +38,7 @@ contract TweetManager {
     ownerTweets[msg.sender][ownerTweetCount[msg.sender]] = tweets[tweetCount];
 
     if (ownerTweetCount[msg.sender] % 3 == 0) {
-      tweetToken.mint(msg.sender, 100);
+      tweetToken.mint(msg.sender, 1);
     }
 
     emit TweetCreated(tweetCount, message, image, msg.sender);
