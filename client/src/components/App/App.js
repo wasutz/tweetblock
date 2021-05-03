@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import TweetManager from "../../contracts/TweetManager.json";
+import TweetToken from "../../contracts/TweetToken.json";
 import getWeb3 from "../../getWeb3";
 import {AppBar, Toolbar, Container, Typography, Button, CssBaseline, CircularProgress}
   from "@material-ui/core";
@@ -11,9 +12,11 @@ import "./App.css";
 class App extends Component {
   state = {
     tweets: [],
+    tokenBalance: 0,
     web3: null,
     accounts: null,
-    contract: null,
+    tweetManagerContract: null,
+    tokenContract: null,
     error: null
   };
 
@@ -21,6 +24,7 @@ class App extends Component {
     const web3 = await this.prepareWeb3();
     if (web3) {
       this.load10LastestTweets();
+      this.loadTokenBalance();
       this.subscribeForNewTweet(web3);
     }
   };
@@ -30,13 +34,16 @@ class App extends Component {
       const web3 = await getWeb3();
       const accounts = await web3.eth.getAccounts();
       const networkId = await web3.eth.net.getId();
-      const deployedNetwork = TweetManager.networks[networkId];
-      const instance = new web3.eth.Contract(
-        TweetManager.abi,
-        deployedNetwork && deployedNetwork.address,
-      );
+      const tweetManagerContract = this.buildTweetManagerContract(web3, networkId);
+      const tweetTokenContract = this.buildTweetTokenContract(web3, networkId);
 
-      this.setState({ web3, accounts, contract: instance, error: null });
+      this.setState({
+        web3,
+        accounts,
+        tweetManagerContract,
+        tweetTokenContract,
+        error: null
+      });
 
       return web3;
     } catch (error) {
@@ -44,33 +51,60 @@ class App extends Component {
     }
   };
 
+  buildTweetManagerContract = (web3, networkId) => {
+    const deployedNetwork = TweetManager.networks[networkId];
+
+    return new web3.eth.Contract(
+      TweetManager.abi,
+      deployedNetwork && deployedNetwork.address,
+    );
+  };
+
+  buildTweetTokenContract = (web3, networkId) => {
+    const deployedNetwork = TweetToken.networks[networkId];
+
+    return new web3.eth.Contract(
+      TweetToken.abi,
+      deployedNetwork && deployedNetwork.address,
+    );
+  };
+
   subscribeForNewTweet = web3 => {
     web3.eth.subscribe('newBlockHeaders', (error) => {
       if (!error) {
         this.load10LastestTweets();
+        this.loadTokenBalance();
       }
     });
   }
 
   load10LastestTweets = async () => {
-    const {contract} = this.state;
+    const {tweetManagerContract} = this.state;
 
-    const tweetCount = await contract.methods.tweetCount().call();
+    const tweetCount = await tweetManagerContract.methods.tweetCount().call();
     if (tweetCount <= 0) {
       return;
     }
 
     const tweets = [];
     for (let i = tweetCount; i >= Math.max(tweetCount - 9, 1); i--) {
-      const tweet = await contract.methods.tweets(i).call();
+      const tweet = await tweetManagerContract.methods.tweets(i).call();
       tweets.push(tweet);
     }
 
     this.setState({tweets});
   };
 
+  loadTokenBalance = async () => {
+    const {accounts, tweetTokenContract} = this.state;
+
+    const tokenBalance = await tweetTokenContract.methods.balanceOf(accounts[0]).call();
+
+    this.setState({tokenBalance});
+  }
+
   createTweet = async (message, image) => {
-    const {accounts, contract} = this.state;
+    const {accounts, tweetManagerContract} = this.state;
 
     if (!message) {
       return;
@@ -78,7 +112,7 @@ class App extends Component {
 
     const imageHash = image ? await this.uploadImage(image) : '';
 
-    await contract.methods.create(message, imageHash).send({from: accounts[0]});
+    await tweetManagerContract.methods.create(message, imageHash).send({from: accounts[0]});
   }
 
   uploadImage = async image => {
@@ -89,7 +123,7 @@ class App extends Component {
   };
 
   render() {
-    const {tweets, web3, error} = this.state;
+    const {tweets, web3, error, tokenBalance} = this.state;
 
     return (
       <>
@@ -102,9 +136,7 @@ class App extends Component {
               </Typography>
             </a>
             <div className="menus">
-              <a href="/" className="menu">
-                <Button color="inherit">Home</Button>
-              </a>
+              <Button color="inherit">Your TWT: {tokenBalance}</Button>
             </div>
           </Toolbar>
         </AppBar>
